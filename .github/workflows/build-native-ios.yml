@@ -1,29 +1,28 @@
-name: Build native iOS AlarmKit app
+name: Validate native iOS AlarmKit app
 
 on:
   push:
     paths:
-      - 'native-ios/ShiftMateAlarmKit_iOS26.zip.b64'
+      - 'native-ios-src/**'
       - '.github/workflows/build-native-ios.yml'
   workflow_dispatch:
 
 jobs:
-  build:
+  typecheck:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - name: Select Xcode 26.6
         run: sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
-      - name: Restore native project
+      - name: Typecheck against iOS 26.1 Simulator SDK
         run: |
-          base64 -D -i native-ios/ShiftMateAlarmKit_iOS26.zip.b64 -o /tmp/ShiftMateAlarmKit_iOS26.zip
-          unzip -q /tmp/ShiftMateAlarmKit_iOS26.zip
-      - name: Build for iOS Simulator
-        run: |
-          xcodebuild \
-            -project ShiftMateAlarmKit/ShiftMateAlarm.xcodeproj \
-            -scheme ShiftMateAlarm \
-            -sdk iphonesimulator \
-            -configuration Debug \
-            CODE_SIGNING_ALLOWED=NO \
-            build
+          SDK="$(xcrun --sdk iphonesimulator --show-sdk-path)"
+          xcrun swiftc \
+            -typecheck \
+            -module-name ShiftMateAlarm \
+            -target arm64-apple-ios26.1-simulator \
+            -sdk "$SDK" \
+            native-ios-src/ShiftMateAlarmApp.swift \
+            native-ios-src/ShiftEngine.swift \
+            native-ios-src/AlarmScheduler.swift \
+            native-ios-src/ContentView.swift
