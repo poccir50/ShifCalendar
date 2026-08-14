@@ -16,7 +16,7 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
       - name: Restore native project
         run: |
-          base64 --decode native-ios/ShiftMateAlarmKit_iOS26.zip.b64 > /tmp/ShiftMateAlarmKit_iOS26.zip
+          base64 -D -i native-ios/ShiftMateAlarmKit_iOS26.zip.b64 -o /tmp/ShiftMateAlarmKit_iOS26.zip
           unzip -q /tmp/ShiftMateAlarmKit_iOS26.zip
       - name: Build for iOS Simulator
         run: |
