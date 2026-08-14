@@ -22,7 +22,7 @@
 <div class="week"><div class="weekday sun">일</div><div class="weekday">월</div><div class="weekday">화</div><div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday sat">토</div></div>
 <div id="cal" class="cal"></div>
 <div class="legend"><span class="주간">주간</span><span class="야간">야간</span><span class="휴무">휴무</span><span style="background:#ffe4e6;color:#be123c">회사휴무·연휴</span><span style="background:#e0f2fe;color:#075985">개인일정</span></div>
-<div class="actions"><button class="btn" onclick="today()">오늘로</button><button class="btn" onclick="quickAdd()">+ 일정 추가</button><button class="btn" onclick="askNotify()">🔔 알림 테스트</button><button class="btn" onclick="exportBackup()">💾 백업</button></div>
+<div class="actions"><button class="btn" onclick="today()">오늘로</button><button class="btn" onclick="quickAdd()">+ 일정 추가</button><button class="btn" onclick="askNotify()">🔔 알림 테스트</button><button class="btn" onclick="exportBackup()">💾 백업</button><button class="btn" onclick="subscribeCalendar()">📅 아이폰 캘린더 연결</button></div>
 <div class="warn">iPhone에서는 Safari 탭이 아니라 홈 화면에 추가한 ShiftMate에서 알림을 허용해야 합니다. 앱을 켜둔 동안에는 기상·개인일정 알림을 보낼 수 있습니다. 앱이 완전히 닫힌 상태의 04:50 자동 알림은 별도 Push 서버 없이는 보장할 수 있으므로 실제 기상용으로는 아이폰 시계 알람도 유지하세요.</div>
 </div></div>
 
@@ -53,6 +53,15 @@ function renderEvents(){let a=E[sel]||[];eventList.innerHTML=a.length?a.map(o=>`
 function openSettings(){sTeam.value=S.team;sDS.value=S.ds;sDE.value=S.de;sNS.value=S.ns;sNE.value=S.ne;sWake.value=S.wake;sBase.value=S.base;sBaseShift.value=S.baseShift;years();tab('work');settingsModal.classList.add('open')}function saveSettings(){S={team:sTeam.value||'A조',ds:sDS.value||'06:45',de:sDE.value||'15:30',ns:sNS.value||'15:35',ne:sNE.value||'00:20',wake:sWake.value||'04:50',base:sBase.value||'2026-08-10',baseShift:sBaseShift.value};save();render();alert('저장했습니다.')}
 function tab(n){[['work','tw','pw'],['holiday','th','ph'],['data','td','pd']].forEach(a=>{document.getElementById(a[1]).classList.toggle('on',a[0]===n);document.getElementById(a[2]).classList.toggle('on',a[0]===n)})}function years(pref){let ys=Object.keys(H).sort();hYear.innerHTML=ys.map(y=>`<option>${y}</option>`).join('');if(pref&&ys.includes(pref))hYear.value=pref;renderHolidayList()}function addYear(){let y=prompt('추가할 연도 예: 2027');if(!y)return;if(!/^\d{4}$/.test(y))return alert('4자리 연도를 입력해주세요.');if(H[y])return alert('이미 있습니다.');H[y]=[];save();years(y)}
 function renderHolidayList(){let y=hYear.value,a=H[y]||[];holidayList.innerHTML=a.length?a.map((o,i)=>`<div class="item"><div><div class="it">${esc(o.name)}</div><div class="im">${o.start}${o.end!==o.start?' ~ '+o.end:''}</div></div><div class="ib"><button class="small edit" onclick="editHoliday(${i})">수정</button><button class="small del" onclick="delHoliday(${i})">삭제</button></div></div>`).join(''):'<div class="emptyState">등록된 휴무가 없습니다.</div>'}function editHoliday(i){let o=H[hYear.value][i];hEdit.value=i;hName.value=o.name;hStart.value=o.start;hEnd.value=o.end}function saveHoliday(){let y=hYear.value,n=hName.value.trim(),s=hStart.value,e=hEnd.value||s;if(!n||!s)return alert('휴무명과 날짜를 입력해주세요.');if(!s.startsWith(y+'-')||!e.startsWith(y+'-'))return alert(y+'년 날짜를 선택해주세요.');let o={name:n,start:s,end:e};hEdit.value!==''?H[y][Number(hEdit.value)]=o:H[y].push(o);H[y].sort((a,b)=>a.start.localeCompare(b.start));hEdit.value='';hName.value=hStart.value=hEnd.value='';save();renderHolidayList();render()}function delHoliday(i){if(!confirm('삭제할까요?'))return;H[hYear.value].splice(i,1);save();renderHolidayList();render()}
+function subscribeCalendar(){
+  const webcal='webcal://poccir50.github.io/ShifCalendar/shiftmate.ics';
+  const https='https://poccir50.github.io/ShifCalendar/shiftmate.ics';
+  if(/iPhone|iPad|iPod/i.test(navigator.userAgent)){
+    if(confirm('아이폰 캘린더에 ShiftMate A조 근무표를 구독할까요?\n\n2026년 회사 휴무와 주·야간 근무, 주간근무일 04:50 기상 일정이 포함됩니다.')) location.href=webcal;
+  }else{
+    window.open(https,'_blank');
+  }
+}
 function download(n,t){let b=new Blob([t],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(u),300)}function exportBackup(){download(`ShiftMate_backup_${key(new Date())}.json`,JSON.stringify({S,H,E},null,2))}async function importBackup(){let f=backupFile.files[0];if(!f)return alert('파일을 선택해주세요.');try{let o=JSON.parse(await f.text());if(!o.S||!o.H||!o.E)throw 0;if(!confirm('현재 데이터를 교체할까요?'))return;S=o.S;H=o.H;E=o.E;save();years();render();alert('복원했습니다.')}catch(e){alert('올바른 백업 파일이 아닙니다.')}}function resetApp(){if(!confirm('모든 사용자 데이터를 초기화할까요?'))return;S={...DEF};H={'2026':H26};E={};save();closeM('settingsModal');render()}
 async function getSW(){
   if(!('serviceWorker' in navigator))throw new Error('Service Worker 미지원');
