@@ -1,0 +1,150 @@
+name: Add iPhone calendar subscription
+
+on:
+  push:
+    paths:
+      - '.github/workflows/add-iphone-calendar.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-calendar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add calendar subscription and ICS feed
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from datetime import date, datetime, timedelta, timezone
+          from zoneinfo import ZoneInfo
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old = 'onclick="exportBackup()">💾 백업</button></div>'
+          new = 'onclick="exportBackup()">💾 백업</button><button class="btn" onclick="subscribeCalendar()">📅 아이폰 캘린더 연결</button></div>'
+          if 'subscribeCalendar()' not in s:
+              if old not in s:
+                  raise SystemExit('actions block not found')
+              s = s.replace(old, new, 1)
+
+          if 'function subscribeCalendar()' not in s:
+              marker = 'function download(n,t)'
+              if marker not in s:
+                  raise SystemExit('download function marker not found')
+              fn = r'''function subscribeCalendar(){
+  const webcal='webcal://poccir50.github.io/ShifCalendar/shiftmate.ics';
+  const https='https://poccir50.github.io/ShifCalendar/shiftmate.ics';
+  if(/iPhone|iPad|iPod/i.test(navigator.userAgent)){
+    if(confirm('아이폰 캘린더에 ShiftMate A조 근무표를 구독할까요?\n\n2026년 회사 휴무와 주·야간 근무, 주간근무일 04:50 기상 일정이 포함됩니다.')){
+      location.href=webcal;
+    }
+  }else{
+    window.open(https,'_blank');
+  }
+}
+'''
+              s = s.replace(marker, fn + marker, 1)
+
+          old_warn = 'iPhone에서는 Safari 탭이 아니라 홈 화면의 ShiftMate에서 알림을 허용해야 합니다. 앱을 켜둔 동안에는 알림을 보낼 수 있지만, 앱이 완전히 닫힌 상태의 04:50 자동 알림은 별도 Push 서버 없이는 보장할 수 없습니다. 실제 기상용으로는 아이폰 시계 알람을 함께 유지하세요.'
+          new_warn = '가장 안정적인 방식은 📅 아이폰 캘린더 연결입니다. 2026년 A조 주·야간 근무와 회사휴무, 주간근무일 04:50 기상 일정이 iPhone 캘린더에 구독됩니다. 캘린더 알림은 iPhone 설정의 알림·집중모드 영향을 받으며 시계 앱의 알람과는 다릅니다.'
+          s = s.replace(old_warn, new_warn)
+          p.write_text(s, encoding='utf-8')
+
+          holidays = [
+            ('2026-01-01','2026-01-02','신정휴무'),
+            ('2026-02-16','2026-02-19','설날휴무'),
+            ('2026-03-01','2026-03-01','삼일절'),
+            ('2026-05-01','2026-05-01','근로자의날'),
+            ('2026-05-04','2026-05-04','근무일조정 휴무'),
+            ('2026-05-05','2026-05-05','어린이날'),
+            ('2026-05-24','2026-05-24','석가탄신일'),
+            ('2026-05-25','2026-05-25','대체휴일 · 회사창립기념일'),
+            ('2026-06-03','2026-06-03','지방선거'),
+            ('2026-06-06','2026-06-06','현충일'),
+            ('2026-07-17','2026-07-17','제헌절'),
+            ('2026-08-03','2026-08-07','하기휴무'),
+            ('2026-08-15','2026-08-15','광복절'),
+            ('2026-08-17','2026-08-17','대체휴일'),
+            ('2026-09-24','2026-09-28','추석휴무'),
+            ('2026-10-03','2026-10-03','개천절'),
+            ('2026-10-05','2026-10-05','대체휴일'),
+            ('2026-10-09','2026-10-09','한글날'),
+            ('2026-10-24','2026-10-24','노조창립일'),
+            ('2026-12-25','2026-12-25','성탄절'),
+          ]
+          holiday_days = set()
+          for a,b,_ in holidays:
+              d=date.fromisoformat(a); e=date.fromisoformat(b)
+              while d<=e:
+                  holiday_days.add(d); d+=timedelta(days=1)
+
+          kst = ZoneInfo('Asia/Seoul')
+          utc = timezone.utc
+          base_monday = date(2026,8,10)
+          stamp = '20260814T124800Z'
+
+          def esc(x):
+              return str(x).replace('\\','\\\\').replace(';','\\;').replace(',','\\,').replace('\n','\\n')
+          def utcstamp(dt):
+              return dt.astimezone(utc).strftime('%Y%m%dT%H%M%SZ')
+          def localdt(d, hhmm):
+              h,m=map(int,hhmm.split(':'))
+              return datetime(d.year,d.month,d.day,h,m,tzinfo=kst)
+
+          lines = [
+              'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ShiftMate//A-Team Calendar//KO',
+              'CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:ShiftMate A조',
+              'X-WR-CALDESC:A조 2026 교대근무 · 회사휴무 · 주간근무일 04:50 기상',
+              'X-WR-TIMEZONE:Asia/Seoul','REFRESH-INTERVAL;VALUE=DURATION:PT6H','X-PUBLISHED-TTL:PT6H'
+          ]
+
+          for a,b,name in holidays:
+              sd=date.fromisoformat(a); ed=date.fromisoformat(b)+timedelta(days=1)
+              lines += [
+                  'BEGIN:VEVENT',f'UID:holiday-{a}-{b}@shiftmate',f'DTSTAMP:{stamp}',
+                  f'DTSTART;VALUE=DATE:{sd.strftime("%Y%m%d")}',f'DTEND;VALUE=DATE:{ed.strftime("%Y%m%d")}',
+                  f'SUMMARY:{esc("🏖️ "+name)}','TRANSP:TRANSPARENT','STATUS:CONFIRMED','END:VEVENT'
+              ]
+
+          d=date(2026,1,1)
+          end=date(2026,12,31)
+          while d<=end:
+              if d.weekday()<5 and d not in holiday_days:
+                  monday=d-timedelta(days=d.weekday())
+                  weeks=(monday-base_monday).days//7
+                  day_shift=(weeks%2==0)
+                  if day_shift:
+                      st=localdt(d,'06:45'); en=localdt(d,'15:30')
+                      wake=localdt(d,'04:50'); wake_end=wake+timedelta(minutes=5)
+                      lines += [
+                          'BEGIN:VEVENT',f'UID:day-{d.isoformat()}@shiftmate',f'DTSTAMP:{stamp}',
+                          f'DTSTART:{utcstamp(st)}',f'DTEND:{utcstamp(en)}',
+                          'SUMMARY:☀️ A조 주간근무','DESCRIPTION:주간 근무 06:45~15:30','STATUS:CONFIRMED','END:VEVENT',
+                          'BEGIN:VEVENT',f'UID:wake-{d.isoformat()}@shiftmate',f'DTSTAMP:{stamp}',
+                          f'DTSTART:{utcstamp(wake)}',f'DTEND:{utcstamp(wake_end)}',
+                          'SUMMARY:⏰ 기상 · A조 주간근무','DESCRIPTION:주간 근무일 기상시간 04:50','STATUS:CONFIRMED',
+                          'BEGIN:VALARM','ACTION:DISPLAY','TRIGGER:PT0S','DESCRIPTION:기상 시간 04:50','END:VALARM','END:VEVENT'
+                      ]
+                  else:
+                      st=localdt(d,'15:35'); en=localdt(d+timedelta(days=1),'00:20')
+                      lines += [
+                          'BEGIN:VEVENT',f'UID:night-{d.isoformat()}@shiftmate',f'DTSTAMP:{stamp}',
+                          f'DTSTART:{utcstamp(st)}',f'DTEND:{utcstamp(en)}',
+                          'SUMMARY:🌙 A조 야간근무','DESCRIPTION:야간 근무 15:35~00:20','STATUS:CONFIRMED','END:VEVENT'
+                      ]
+              d += timedelta(days=1)
+
+          lines.append('END:VCALENDAR')
+          Path('shiftmate.ics').write_text('\r\n'.join(lines)+'\r\n', encoding='utf-8')
+          PY
+
+      - name: Commit calendar integration
+        run: |
+          git config user.name "ShiftMate Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html shiftmate.ics
+          git commit -m "Add iPhone calendar subscription feed"
+          git push
