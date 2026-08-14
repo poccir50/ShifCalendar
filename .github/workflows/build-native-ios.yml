@@ -3,7 +3,7 @@ name: Build native iOS AlarmKit app
 on:
   push:
     paths:
-      - 'native-ios/ShiftMateAlarmKit_iOS26.zip'
+      - 'native-ios/ShiftMateAlarmKit_iOS26.zip.b64'
       - '.github/workflows/build-native-ios.yml'
   workflow_dispatch:
 
@@ -14,8 +14,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Select Xcode 26.6
         run: sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
-      - name: Unpack native project
-        run: unzip -q native-ios/ShiftMateAlarmKit_iOS26.zip
+      - name: Restore native project
+        run: |
+          base64 --decode native-ios/ShiftMateAlarmKit_iOS26.zip.b64 > /tmp/ShiftMateAlarmKit_iOS26.zip
+          unzip -q /tmp/ShiftMateAlarmKit_iOS26.zip
       - name: Build for iOS Simulator
         run: |
           xcodebuild \
