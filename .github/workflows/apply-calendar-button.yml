@@ -1,0 +1,24 @@
+name: Apply calendar button
+
+on:
+  push:
+    paths:
+      - 'tools/patch_calendar_button.py'
+      - '.github/workflows/apply-calendar-button.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/patch_calendar_button.py
+      - run: |
+          git config user.name "ShiftMate Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Add iPhone calendar connect button"
+          git push
