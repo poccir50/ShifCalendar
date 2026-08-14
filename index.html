@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ShiftMate">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <title>ShiftMate · 교대근무 달력</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f6f8;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}.app{max-width:650px;margin:auto;padding:10px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:22px;padding:16px;box-shadow:0 8px 25px #0000000d}.top{display:flex;justify-content:space-between;align-items:flex-start}.top h1{margin:0;font-size:24px}.sub{color:#6b7280;font-size:13px;margin-top:4px}.gear,.nav{border:0;background:#f3f4f6;border-radius:11px;padding:10px 14px;font-size:18px}.status{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}.mini{background:#f9fafb;border:1px solid #e5e7eb;border-radius:15px;padding:12px}.mini small{color:#6b7280}.big{font-size:19px;font-weight:850;margin:3px 0}.desc{font-size:11px;color:#6b7280;line-height:1.4}.monthbar{display:flex;justify-content:space-between;align-items:center;margin:18px 0 12px}#monthTitle{font-size:20px;font-weight:850}.week,.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.weekday{text-align:center;color:#6b7280;font-size:12px;font-weight:750;padding:5px}.sun{color:#dc2626}.sat{color:#2563eb}.day{min-height:98px;border:1px solid #e5e7eb;border-radius:11px;padding:5px 2px;text-align:center;background:#fff;overflow:hidden}.empty{border:0;background:transparent}.date{font-size:13px;font-weight:850;margin-bottom:5px}.today{outline:3px solid #111827;outline-offset:1px}.badge{display:inline-block;border-radius:7px;padding:3px 6px;font-size:9px;font-weight:850}.주간{background:#fef3c7;color:#92400e}.야간{background:#dbeafe;color:#1d4ed8}.휴무{background:#f3f4f6;color:#6b7280}.holiday{background:#fff1f2;border-color:#fda4af}.holiday.long{background:#ffe4e6}.hname{font-size:8px;color:#be123c;font-weight:800;line-height:1.15;margin-top:4px}.note{font-size:7px;color:#4338ca;background:#eef2ff;border-radius:4px;margin-top:3px;padding:2px}.ev{font-size:7px;color:#075985;background:#e0f2fe;border-radius:4px;margin-top:3px;padding:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.legend{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}.legend span{font-size:9px;padding:4px 7px;border-radius:999px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}.btn{border:0;border-radius:11px;padding:11px;font-weight:800;background:#f3f4f6}.primary{background:#111827;color:#fff}.warn{margin-top:12px;background:#fff7ed;color:#9a3412;border-radius:11px;padding:10px;font-size:10px;line-height:1.5}.overlay{display:none;position:fixed;inset:0;z-index:20;background:#11182777;padding:14px;align-items:center;justify-content:center}.overlay.open{display:flex}.modal{width:100%;max-width:500px;max-height:92vh;overflow:auto;background:#fff;border-radius:20px;padding:17px}.mhead{display:flex;justify-content:space-between;align-items:center}.mhead h2{margin:0;font-size:20px}.close{border:0;background:#f3f4f6;border-radius:50%;width:35px;height:35px;font-size:20px}.box{margin-top:10px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:11px;padding:10px;font-size:12px}.section{border-top:1px solid #e5e7eb;margin-top:16px;padding-top:15px}.section:first-of-type{border-top:0}.stitle{font-weight:850;font-size:14px}.help{color:#6b7280;font-size:10px;line-height:1.45;margin-top:3px}.field{margin-top:10px}.field label{display:block;color:#6b7280;font-size:11px;font-weight:700;margin-bottom:4px}.field input,.field select,.field textarea{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px;font-size:16px;background:#fff}.field textarea{min-height:65px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.list{margin-top:9px}.item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:9px;margin-bottom:6px}.it{font-size:12px;font-weight:800}.im{font-size:10px;color:#6b7280;margin-top:2px}.ib{display:flex;gap:4px}.small{border:0;border-radius:7px;padding:5px 7px;font-size:10px;font-weight:800}.edit{background:#e5e7eb}.del{background:#fee2e2;color:#991b1b}.tabs{display:flex;gap:5px;background:#f3f4f6;padding:4px;border-radius:11px;margin-top:12px}.tab{flex:1;border:0;background:transparent;border-radius:8px;padding:7px;font-size:11px;font-weight:800}.tab.on{background:#fff}.panel{display:none}.panel.on{display:block}.emptyState{text-align:center;background:#fafafa;color:#6b7280;border-radius:9px;padding:11px;font-size:11px}@media(max-width:480px){.app{padding:5px}.card{padding:12px}.day{min-height:92px}.g2{grid-template-columns:1fr}}
@@ -20,8 +22,8 @@
 <div class="week"><div class="weekday sun">일</div><div class="weekday">월</div><div class="weekday">화</div><div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday sat">토</div></div>
 <div id="cal" class="cal"></div>
 <div class="legend"><span class="주간">주간</span><span class="야간">야간</span><span class="휴무">휴무</span><span style="background:#ffe4e6;color:#be123c">회사휴무·연휴</span><span style="background:#e0f2fe;color:#075985">개인일정</span></div>
-<div class="actions"><button class="btn" onclick="today()">오늘로</button><button class="btn" onclick="quickAdd()">+ 일정 추가</button><button class="btn" onclick="askNotify()">🔔 알림 권한</button><button class="btn" onclick="exportBackup()">💾 백업</button></div>
-<div class="warn">웹앱의 04:50 알림은 iPhone에서 앱이 닫혀 있으면 정확한 시각에 울린다고 보장할 수 없습니다. 실제 기상용으로는 아이폰 시계 알람을 함께 유지하는 것을 권장합니다.</div>
+<div class="actions"><button class="btn" onclick="today()">오늘로</button><button class="btn" onclick="quickAdd()">+ 일정 추가</button><button class="btn" onclick="askNotify()">🔔 알림 테스트</button><button class="btn" onclick="exportBackup()">💾 백업</button></div>
+<div class="warn">iPhone에서는 Safari 탭이 아니라 홈 화면에 추가한 ShiftMate에서 알림을 허용해야 합니다. 앱을 켜둔 동안에는 기상·개인일정 알림을 보낼 수 있습니다. 앱이 완전히 닫힌 상태의 04:50 자동 알림은 별도 Push 서버 없이는 보장할 수 있으므로 실제 기상용으로는 아이폰 시계 알람도 유지하세요.</div>
 </div></div>
 
 <div id="eventModal" class="overlay"><div class="modal"><div class="mhead"><h2 id="eventDate"></h2><button class="close" onclick="closeM('eventModal')">×</button></div><div id="shiftBox" class="box"></div><div class="section"><div class="stitle">등록된 일정</div><div id="eventList" class="list"></div></div><div class="section"><div class="stitle">일정 추가 / 수정</div><input id="editEventId" type="hidden"><div class="field"><label>일정명</label><input id="eventTitle" placeholder="예: 치과, 약속"></div><div class="g2"><div class="field"><label>시간</label><input id="eventTime" type="time"></div><div class="field"><label>알림</label><select id="eventReminder"><option value="none">없음</option><option value="10">10분 전</option><option value="30">30분 전</option><option value="60">1시간 전</option><option value="1440">하루 전</option></select></div></div><div class="field"><label>메모</label><textarea id="eventMemo"></textarea></div><button class="btn primary" style="width:100%;margin-top:12px" onclick="saveEvent()">일정 저장</button></div></div></div>
@@ -52,8 +54,45 @@ function openSettings(){sTeam.value=S.team;sDS.value=S.ds;sDE.value=S.de;sNS.val
 function tab(n){[['work','tw','pw'],['holiday','th','ph'],['data','td','pd']].forEach(a=>{document.getElementById(a[1]).classList.toggle('on',a[0]===n);document.getElementById(a[2]).classList.toggle('on',a[0]===n)})}function years(pref){let ys=Object.keys(H).sort();hYear.innerHTML=ys.map(y=>`<option>${y}</option>`).join('');if(pref&&ys.includes(pref))hYear.value=pref;renderHolidayList()}function addYear(){let y=prompt('추가할 연도 예: 2027');if(!y)return;if(!/^\d{4}$/.test(y))return alert('4자리 연도를 입력해주세요.');if(H[y])return alert('이미 있습니다.');H[y]=[];save();years(y)}
 function renderHolidayList(){let y=hYear.value,a=H[y]||[];holidayList.innerHTML=a.length?a.map((o,i)=>`<div class="item"><div><div class="it">${esc(o.name)}</div><div class="im">${o.start}${o.end!==o.start?' ~ '+o.end:''}</div></div><div class="ib"><button class="small edit" onclick="editHoliday(${i})">수정</button><button class="small del" onclick="delHoliday(${i})">삭제</button></div></div>`).join(''):'<div class="emptyState">등록된 휴무가 없습니다.</div>'}function editHoliday(i){let o=H[hYear.value][i];hEdit.value=i;hName.value=o.name;hStart.value=o.start;hEnd.value=o.end}function saveHoliday(){let y=hYear.value,n=hName.value.trim(),s=hStart.value,e=hEnd.value||s;if(!n||!s)return alert('휴무명과 날짜를 입력해주세요.');if(!s.startsWith(y+'-')||!e.startsWith(y+'-'))return alert(y+'년 날짜를 선택해주세요.');let o={name:n,start:s,end:e};hEdit.value!==''?H[y][Number(hEdit.value)]=o:H[y].push(o);H[y].sort((a,b)=>a.start.localeCompare(b.start));hEdit.value='';hName.value=hStart.value=hEnd.value='';save();renderHolidayList();render()}function delHoliday(i){if(!confirm('삭제할까요?'))return;H[hYear.value].splice(i,1);save();renderHolidayList();render()}
 function download(n,t){let b=new Blob([t],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(u),300)}function exportBackup(){download(`ShiftMate_backup_${key(new Date())}.json`,JSON.stringify({S,H,E},null,2))}async function importBackup(){let f=backupFile.files[0];if(!f)return alert('파일을 선택해주세요.');try{let o=JSON.parse(await f.text());if(!o.S||!o.H||!o.E)throw 0;if(!confirm('현재 데이터를 교체할까요?'))return;S=o.S;H=o.H;E=o.E;save();years();render();alert('복원했습니다.')}catch(e){alert('올바른 백업 파일이 아닙니다.')}}function resetApp(){if(!confirm('모든 사용자 데이터를 초기화할까요?'))return;S={...DEF};H={'2026':H26};E={};save();closeM('settingsModal');render()}
-async function askNotify(){if(!('Notification'in window))return alert('이 브라우저는 웹 알림을 지원하지 않습니다.');let p=await Notification.requestPermission();if(p==='granted')new Notification('ShiftMate',{body:'알림 권한이 허용되었습니다.'})}
-function checkNotify(){if(!('Notification'in window)||Notification.permission!=='granted')return;let n=new Date(),hm=`${pad(n.getHours())}:${pad(n.getMinutes())}`;if(hm===S.wake&&shift(n)==='주간'){let k='sm.notify.'+key(n);if(!sessionStorage.getItem(k)){new Notification('기상 시간',{body:`${S.team} 주간근무 · ${S.ds} 출근`});sessionStorage.setItem(k,'1')}}}
-setInterval(checkNotify,30000);function closeM(id){document.getElementById(id).classList.remove('open')}document.querySelectorAll('.overlay').forEach(x=>x.onclick=e=>{if(e.target===x)x.classList.remove('open')});render();
+async function getSW(){
+  if(!('serviceWorker' in navigator))throw new Error('Service Worker 미지원');
+  await navigator.serviceWorker.register('./sw.js');
+  return await navigator.serviceWorker.ready;
+}
+function isIOS(){return /iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+function standalone(){return (window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true}
+async function askNotify(){
+  if(isIOS()&&!standalone())return alert('iPhone에서는 Safari가 아니라 홈 화면에 추가한 ShiftMate 아이콘으로 실행한 뒤 이 버튼을 눌러주세요.');
+  if(!('Notification' in window)||!('serviceWorker' in navigator))return alert('이 실행 환경에서는 웹 알림을 사용할 수 없습니다.');
+  try{
+    let permission=await Notification.requestPermission();
+    if(permission!=='granted')return alert('알림 권한이 허용되지 않았습니다. iPhone 설정 → 알림 → ShiftMate도 확인해주세요.');
+    let reg=await getSW();
+    await reg.showNotification('ShiftMate 알림 테스트',{body:'이 알림이 보이면 실행 중 알림 기능은 정상입니다.',tag:'shiftmate-test-'+Date.now()});
+  }catch(e){alert('알림 테스트 실패: '+(e&&e.message?e.message:e))}
+}
+async function showShiftNotification(title,body,tag){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  try{let reg=await getSW();await reg.showNotification(title,{body,tag})}catch(e){console.error(e)}
+}
+async function checkNotify(){
+  let n=new Date(),hm=`${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  if(hm===S.wake&&shift(n)==='주간'){
+    let k='sm.notify.'+key(n);
+    if(!sessionStorage.getItem(k)){await showShiftNotification('기상 시간',`${S.team} 주간근무 · ${S.ds} 출근`,k);sessionStorage.setItem(k,'1')}
+  }
+  for(let [dateKey,arr] of Object.entries(E))for(let ev of arr){
+    let reminder=ev.rem??ev.reminder??'none';
+    if(!ev.time||reminder==='none')continue;
+    let eventDate=new Date(`${dateKey}T${ev.time}:00`),trigger=new Date(eventDate.getTime()-Number(reminder)*60000);
+    if(Math.abs(n-trigger)<45000){
+      let k=`sm.event.${dateKey}.${ev.id}.${reminder}`;
+      if(!sessionStorage.getItem(k)){await showShiftNotification(ev.title,`${dateKey} ${ev.time}${ev.memo?' · '+ev.memo:''}`,k);sessionStorage.setItem(k,'1')}
+    }
+  }
+}
+setInterval(checkNotify,30000);setTimeout(checkNotify,1500);function closeM(id){document.getElementById(id).classList.remove('open')}document.querySelectorAll('.overlay').forEach(x=>x.onclick=e=>{if(e.target===x)x.classList.remove('open')});render();
+
+if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{let r=await navigator.serviceWorker.register('./sw.js');await r.update()}catch(e){console.error(e)}})}
 </script>
 </body></html>
